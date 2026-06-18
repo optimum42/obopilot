@@ -1,4 +1,4 @@
-# src/myproject/config.py
+# src/obopilot/config.py
 
 from pathlib import Path
 from dotenv import load_dotenv

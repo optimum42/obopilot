@@ -1,5 +1,5 @@
-from myproject.config import APP_NAME, OUTPUT_DIR
-from myproject.config import LOG_DIR, LOG_FILE
+from obopilot.config import APP_NAME, OUTPUT_DIR
+from obopilot.config import LOG_DIR, LOG_FILE
 import logging
 
 

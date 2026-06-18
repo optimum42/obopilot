@@ -1,4 +1,4 @@
-# Project Name
+# OBO Pilot
 
 ![Python](https://img.shields.io/badge/Python-3.14-blue)
 ![SQLite](https://img.shields.io/badge/SQLite-Database-green)
