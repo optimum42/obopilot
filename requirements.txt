@@ -6,7 +6,9 @@ alembic>=1.16
 psycopg2-binary>=2.9
 python-dotenv>=1.1
 python-jose[cryptography]>=3.5
-passlib[bcrypt]>=1.7
+passlib[bcrypt]
+bcrypt<5
+passlib
 requests>=2.32
 pytest>=8.4
 fastapi[standard]

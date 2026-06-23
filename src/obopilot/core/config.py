@@ -1,5 +1,6 @@
 # src/obopilot/config.py
 
+from datetime import timedelta
 from pathlib import Path
 from dotenv import load_dotenv
 import os
@@ -50,3 +51,16 @@ LOG_FILE = LOG_DIR / "app.log"
 REQUEST_TIMEOUT = 30
 
 MAX_RETRIES = 3
+
+# -------------------------------------------------------------------
+# JWT Auth
+# -------------------------------------------------------------------
+
+SECRET_KEY = os.getenv("SECRET_KEY")
+if not SECRET_KEY:
+    raise ValueError("SECRET_KEY not configured")
+
+ALGORITHM = "HS256"
+ACCESS_TOKEN_EXPIRE_MINUTES = 30
+
+ACCESS_TOKEN_EXPIRE_DELTA = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
