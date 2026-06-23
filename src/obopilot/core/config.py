@@ -27,7 +27,7 @@ LOG_DIR.mkdir(exist_ok=True)
 # Environment Variables
 # -------------------------------------------------------------------
 
-APP_NAME = os.getenv("APP_NAME", "MyProject")
+APP_NAME = os.getenv("APP_NAME", "OBO-Pilot")
 
 API_KEY = os.getenv("API_KEY", "")
 API_BASE_URL = os.getenv(

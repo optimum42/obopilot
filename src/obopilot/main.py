@@ -1,6 +1,23 @@
-from obopilot.config import APP_NAME, OUTPUT_DIR
-from obopilot.config import LOG_DIR, LOG_FILE
+from obopilot.core.config import APP_NAME, OUTPUT_DIR, LOG_DIR, LOG_FILE
 import logging
+from fastapi import FastAPI
+from obopilot.api.v1.router import api_router
+
+app = FastAPI(
+    title="OBO Pilot API",
+    version="0.1.0",
+)
+
+app.include_router(api_router, prefix="/api/v1")
+
+@app.get("/")
+def root():
+    return {"message": "OBO Pilot API is running"}
+
+
+@app.get("/health")
+def health_check():
+    return {"status": "ok"}
 
 
 def show_app():
@@ -38,3 +55,15 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+# Server Start
+# uvicorn obopilot.main:app --reload
+
+# oder direkt über python in der aktiven venv:
+# python -m uvicorn obopilot.main:app --reload
+
+# using fastapi
+# fastapi dev main.py
+
+# Doc by Redoc
+# http://127.0.0.1:8000/redoc

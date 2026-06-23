@@ -5,3 +5,9 @@ requires-python = ">=3.10"
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+
+[tool.fastapi]
+entrypoint = "obopilot.main:app"

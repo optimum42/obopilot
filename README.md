@@ -1,16 +1,24 @@
 # OBO Pilot
 
+![WIP](https://img.shields.io/badge/WORK_IN_PROGRESS-red)
 ![Python](https://img.shields.io/badge/Python-3.14-blue)
-![SQLite](https://img.shields.io/badge/SQLite-Database-green)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Database-green)
+![FastAPI](https://img.shields.io/badge/FastAPI-API-cyan)
 ![License](https://img.shields.io/badge/License-MIT-yellow)
 
-Short project description.
+AI-powered platform for creating and implementing a complete online marketing system, from brand positioning to traffic generation.
 
-Explain in 1–3 sentences:
+**What the Project Does**
 
-- what the project does
-- why it exists
-- what problem it solves
+OBO Pilot uses specialized AI assistants to guide users through a structured marketing process. It helps generate positioning statements, marketing strategies, website content, email campaigns, and advertising concepts while storing and organizing all project data in one place.
+
+**Why It Exists**
+
+Many entrepreneurs understand the importance of marketing but struggle to develop a clear, structured approach and turn ideas into action. OBO Pilot bridges the gap between marketing strategy and practical implementation by providing AI-guided support at every stage.
+
+**What Problem It Solves**
+
+Most small business owners and self-employed professionals lack the time, expertise, or resources to build a complete marketing system on their own. OBO Pilot simplifies this process by combining proven marketing frameworks with AI-powered guidance, helping users move from concept to execution faster and more efficiently.
 
 ---
 
@@ -101,7 +109,7 @@ pytest tests/test_main.py
 
 # Environment Variables
 
-Create a local `.env` file based on `.env.example`.
+Create a local `.env` file based on `env.example`.
 
 Example:
 
@@ -125,17 +133,14 @@ DEBUG=true
 ```text
 project/
 ├── README.md
-├── LICENSE
-├── pyproject.toml
-├── requirements.txt
-├── setup.sh
-├── src/
-│   └── myproject/
-├── tests/
-├── docs/
+├── cli/
 ├── data/
+├── docs/
+├── logs/
 ├── output/
-└── logs/
+├── src/
+│   └── obopilot/
+└── tests/
 ```
 
 ---
@@ -150,9 +155,3 @@ Recommended workflow:
 4. Keep dependencies updated
 
 ---
-
-# License
-
-This project is licensed under the MIT License.
-
-See the `LICENSE` file for details.

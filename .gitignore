@@ -9,3 +9,4 @@ __pycache__
 data/exports/
 data/
 output/
+pip_freeze_requirements.txt
