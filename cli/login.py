@@ -1,6 +1,3 @@
-# cli/login.py
-import os
-
 import requests
 
 BASE_URL = "http://127.0.0.1:8000"
@@ -12,6 +9,16 @@ def print_response(response):
         print("Response:", response.json())
     except requests.exceptions.JSONDecodeError:
         print("Response:", response.text)
+
+
+def register(email, password):
+    response = requests.post(
+        f"{BASE_URL}/api/v1/auth/register",
+        json={"email": email, "password": password},
+    )
+
+    print_response(response)
+    return response.json()
 
 
 def login(email, password):
@@ -50,9 +57,16 @@ def me(access_token=None):
     print_response(response)
 
 
-def main():
+def get_credentials():
     email = input("Email: ")
     password = input("Password: ")
+    return email, password
+
+
+def main():
+    email, password = get_credentials()
+    print("Registering...")
+    register(email, password)
 
     print("Login to your account...")
     access_token = login(email, password)

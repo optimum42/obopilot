@@ -30,6 +30,7 @@ def health_check():
 def show_app():
     print(APP_NAME)
     print(OUTPUT_DIR)
+    print(LOG_DIR)
 
 
 def run_log():

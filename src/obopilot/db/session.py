@@ -1,7 +1,5 @@
 from collections.abc import Generator
-
 from sqlmodel import Session
-
 from obopilot.db.database import engine
 
 

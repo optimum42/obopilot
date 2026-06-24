@@ -7,4 +7,4 @@ class User(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
     email: str = Field(index=True, unique=True, nullable=False)
     password_hash: str
-
+    role: str = Field(default="user", nullable=False)
