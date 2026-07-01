@@ -11,3 +11,6 @@ pythonpath = ["src"]
 
 [tool.fastapi]
 entrypoint = "obopilot.main:app"
+
+[project.scripts]
+aicontext = "aicontext.cli:main"

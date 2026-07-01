@@ -24,12 +24,12 @@ def create_demo_user(
     session: Session,
     email: str,
     password: str,
-    role: str = "user",
+    admin_status: bool=False,
 ) -> User:
     user = User(
         email=email,
         password_hash=hash_password(password),
-        role=role,
+        is_admin = admin_status,
     )
 
     session.add(user)
@@ -101,7 +101,7 @@ def seed_database():
             session,
             "admin@example.com",
             "admin123",
-            role="admin",
+            True,
         )
 
         print()

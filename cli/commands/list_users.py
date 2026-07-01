@@ -12,14 +12,18 @@ def list_users():
         ).all()
 
         print()
-        print("Users")
+        print(
+            f"{'Users':<10}"
+            f"{'Admin':<15}"
+            f"Email"
+        )
         print("-" * 50)
 
         for user in users:
             print(
-                f"{user.id:<5}"
-                f"{user.role:<10}"
-                f"{user.email}"
+                f"{user.id:<10}"                
+                f"{str(user.is_admin):<15}"
+                f"{user.email:}"
             )
 
         print()

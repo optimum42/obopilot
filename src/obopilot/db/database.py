@@ -1,6 +1,9 @@
 from sqlmodel import SQLModel, create_engine
-from obopilot.models.user import User
-from obopilot.models.project import Project
+
+from obopilot.models.positioning import Positioning  # noqa: F401
+from obopilot.models.project import Project  # noqa: F401
+from obopilot.models.user import User  # noqa: F401
+
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parents[3]
@@ -15,4 +18,6 @@ engine = create_engine(
 
 
 def create_db_and_tables() -> None:
-    SQLModel.metadata.create_all(engine)
+# usage of alembic doesn't need create_db_and_tables anymore
+#    SQLModel.metadata.create_all(engine)
+    pass

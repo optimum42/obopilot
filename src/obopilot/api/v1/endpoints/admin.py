@@ -61,14 +61,6 @@ def admin_update_user(
     if "password" in update_data:
         user.password_hash = hash_password(user_update.password)
 
-    if "role" in update_data:
-        if user_update.role not in ["user", "admin"]:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Invalid role.",
-            )
-        user.role = user_update.role
-
     session.add(user)
     session.commit()
     session.refresh(user)

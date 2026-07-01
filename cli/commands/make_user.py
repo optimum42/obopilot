@@ -18,7 +18,7 @@ def make_user(email: str):
             print("User not found.")
             return
 
-        user.role = "user"
+        user.is_admin = False
 
         session.add(user)
         session.commit()

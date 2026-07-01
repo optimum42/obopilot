@@ -9,7 +9,8 @@ class UserCreate(SQLModel):
 class UserRead(SQLModel):
     id: int
     email: str
-    role: str
+    is_active: bool
+    is_admin: bool
 
 
 class UserUpdate(SQLModel):
@@ -20,4 +21,5 @@ class UserUpdate(SQLModel):
 class UserAdminUpdate(SQLModel):
     email: str | None = None
     password: str | None = None
-    role: str | None = None
+    is_active: bool | None = None
+    is_admin: bool | None = None

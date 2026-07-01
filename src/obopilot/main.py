@@ -2,7 +2,6 @@ from obopilot.core.config import APP_NAME, OUTPUT_DIR, LOG_DIR, LOG_FILE
 import logging
 from fastapi import FastAPI
 from obopilot.api.v1.router import api_router
-from obopilot.db.database import create_db_and_tables
 
 app = FastAPI(
     title="OBO Pilot API",
@@ -10,11 +9,6 @@ app = FastAPI(
 )
 
 app.include_router(api_router, prefix="/api/v1")
-
-
-@app.on_event("startup")
-def on_startup():
-    create_db_and_tables()
 
 
 @app.get("/")
