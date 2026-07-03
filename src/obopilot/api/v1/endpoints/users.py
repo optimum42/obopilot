@@ -1,3 +1,4 @@
+from datetime import datetime, timezone
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlmodel import Session, select
 
@@ -45,6 +46,8 @@ def update_user_me(
 
     if "password" in update_data:
         current_user.password_hash = hash_password(user_update.password)
+
+    current_user.updated_at = datetime.now(timezone.utc)
 
     session.add(current_user)
     session.commit()

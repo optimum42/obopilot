@@ -21,6 +21,13 @@ def auth_health():
     return {"status": "auth endpoint ready"}
 
 
+@router.get("/me", response_model=UserRead)
+def read_current_user(
+    current_user: User = Depends(get_current_user),
+):
+    return current_user
+
+
 @router.post(
     "/register",
     response_model=UserRead,
@@ -87,10 +94,3 @@ def logout_user():
     return {
         "message": "Logged out. Please remove the access token on the client side."
     }
-
-
-@router.get("/me", response_model=UserRead)
-def read_current_user(
-    current_user: User = Depends(get_current_user),
-):
-    return current_user

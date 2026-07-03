@@ -6,8 +6,10 @@ from obopilot.core.security import hash_password
 from obopilot.db.session import get_session
 from obopilot.models.project import Project
 from obopilot.models.user import User
+from obopilot.models.positioning import Positioning
 from obopilot.schemas.user import UserAdminUpdate, UserRead
 from obopilot.schemas.project import ProjectRead, ProjectUpdate
+from obopilot.schemas.positioning import PositioningRead
 
 router = APIRouter()
 
@@ -18,14 +20,6 @@ def admin_read_users(
     session: Session = Depends(get_session),
 ):
     return session.exec(select(User)).all()
-
-
-@router.get("/projects", response_model=list[ProjectRead])
-def admin_read_projects(
-    admin_user: User = Depends(get_current_admin_user),
-    session: Session = Depends(get_session),
-):
-    return session.exec(select(Project)).all()
 
 
 @router.put("/users/{user_id}", response_model=UserRead)
@@ -95,6 +89,14 @@ def admin_delete_user(
     return None
 
 
+@router.get("/projects", response_model=list[ProjectRead])
+def admin_read_projects(
+    admin_user: User = Depends(get_current_admin_user),
+    session: Session = Depends(get_session),
+):
+    return session.exec(select(Project)).all()
+
+
 @router.get("/projects/{project_id}", response_model=ProjectRead)
 def admin_read_project(
     project_id: int,
@@ -110,6 +112,14 @@ def admin_read_project(
         )
 
     return project
+
+
+@router.get("/positionings", response_model=list[PositioningRead])
+def admin_read_positionings(
+    admin_user: User = Depends(get_current_admin_user),
+    session: Session = Depends(get_session),
+):
+    return session.exec(select(Positioning)).all()
 
 
 @router.put("/projects/{project_id}", response_model=ProjectRead)
@@ -152,6 +162,13 @@ def admin_delete_project(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Project not found.",
         )
+
+    # Delete all positionings associated with this project
+    statement = select(Positioning).where(Positioning.project_id == project_id)
+    positionings = session.exec(statement).all()
+
+    for positioning in positionings:
+        session.delete(positioning)
 
     session.delete(project)
     session.commit()

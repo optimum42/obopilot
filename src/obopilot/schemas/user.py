@@ -1,3 +1,4 @@
+from datetime import datetime
 from sqlmodel import SQLModel
 
 
@@ -11,6 +12,8 @@ class UserRead(SQLModel):
     email: str
     is_active: bool
     is_admin: bool
+    created_at: datetime
+    updated_at: datetime
 
 
 class UserUpdate(SQLModel):

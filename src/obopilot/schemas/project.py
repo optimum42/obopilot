@@ -1,5 +1,4 @@
 from datetime import datetime
-
 from sqlmodel import SQLModel
 
 
@@ -19,4 +18,5 @@ class ProjectRead(SQLModel):
     name: str
     description: str | None
     created_at: datetime
+    updated_at: datetime
 

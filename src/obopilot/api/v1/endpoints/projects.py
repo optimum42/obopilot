@@ -1,3 +1,4 @@
+from datetime import datetime, timezone
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlmodel import Session, select
 
@@ -6,6 +7,7 @@ from obopilot.db.session import get_session
 from obopilot.models.project import Project
 from obopilot.models.user import User
 from obopilot.schemas.project import ProjectCreate, ProjectRead, ProjectUpdate
+from obopilot.models.positioning import Positioning
 
 router = APIRouter()
 
@@ -105,6 +107,8 @@ def update_project(
     for key, value in update_data.items():
         setattr(project, key, value)
 
+    project.updated_at = datetime.now(timezone.utc)
+
     session.add(project)
     session.commit()
     session.refresh(project)
@@ -134,6 +138,14 @@ def delete_project(
             detail="Project not found.",
         )
 
+    # Delete all positionings associated with this project
+    statement = select(Positioning).where(Positioning.user_id == current_user.id)
+    positionings = session.exec(statement).all()
+
+    for positioning in positionings:
+        session.delete(positioning)
+
+    # Delete the project itself
     session.delete(project)
     session.commit()
 

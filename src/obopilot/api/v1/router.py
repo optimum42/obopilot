@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from obopilot.api.v1.endpoints import ai, auth, users, projects, admin
+from obopilot.api.v1.endpoints import ai, auth, users, projects, admin, positionings
 
 api_router = APIRouter()
 
@@ -7,5 +7,6 @@ api_router.include_router(auth.router, prefix="/auth", tags=["auth"])
 api_router.include_router(admin.router, prefix="/admin", tags=["admin"])
 api_router.include_router(users.router, prefix="/users", tags=["users"])
 api_router.include_router(projects.router, prefix="/projects", tags=["projects"])
+api_router.include_router(positionings.router, tags=["positionings"])
 api_router.include_router(ai.router, prefix="/ai", tags=["ai"])
 
