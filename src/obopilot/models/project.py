@@ -8,17 +8,33 @@ if TYPE_CHECKING:
     from obopilot.models.positioning import Positioning
 
 
-class Project(SQLModel, table=True):
-    __tablename__ = "projects"
-
+class ProjectBase(SQLModel):
     id: int | None = Field(default=None, primary_key=True)
     user_id: int = Field(index=True, foreign_key="users.id")
 
-    name: str = Field(index=True, nullable=False)
+    name: str
     description: str | None = None
 
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
+
+class ProjectRead(ProjectBase):
+    pass
+
+
+class Project(ProjectBase, table=True):
+    __tablename__ = "projects"
+
     user: "User" = Relationship(back_populates="projects")
     positioning: "Positioning" = Relationship(back_populates="project")
+
+
+class ProjectCreate(SQLModel):
+    name: str
+    description: str | None = None
+
+
+class ProjectUpdate(SQLModel):
+    name: str | None = None
+    description: str | None = None

@@ -5,9 +5,9 @@ from sqlmodel import Session, select
 from obopilot.api.deps import get_current_user
 from obopilot.core.security import hash_password
 from obopilot.db.session import get_session
-from obopilot.models.user import User
+from obopilot.models.user import User, UserRead, UserUpdate
 from obopilot.models.project import Project
-from obopilot.schemas.user import UserRead, UserUpdate
+from obopilot.models.positioning import Positioning
 
 router = APIRouter()
 
@@ -61,6 +61,13 @@ def delete_user_me(
     current_user: User = Depends(get_current_user),
     session: Session = Depends(get_session),
 ):
+    # Delete all user positionings
+    statement = select(Positioning).where(Positioning.user_id == current_user.id)
+    positionings = session.exec(statement).all()
+
+    for positioning in positionings:
+        session.delete(positioning)
+
     # Delete all user projects
     statement = select(Project).where(Project.user_id == current_user.id)
     projects = session.exec(statement).all()

@@ -1,15 +1,13 @@
+from datetime import datetime, timezone
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlmodel import Session, select
 
 from obopilot.api.deps import get_current_admin_user
 from obopilot.core.security import hash_password
 from obopilot.db.session import get_session
-from obopilot.models.project import Project
-from obopilot.models.user import User
-from obopilot.models.positioning import Positioning
-from obopilot.schemas.user import UserAdminUpdate, UserRead
-from obopilot.schemas.project import ProjectRead, ProjectUpdate
-from obopilot.schemas.positioning import PositioningRead
+from obopilot.models.project import Project, ProjectRead, ProjectUpdate
+from obopilot.models.user import User, UserAdminUpdate, UserRead
+from obopilot.models.positioning import Positioning, PositioningRead
 
 router = APIRouter()
 
@@ -55,6 +53,14 @@ def admin_update_user(
     if "password" in update_data:
         user.password_hash = hash_password(user_update.password)
 
+    if "is_active" in update_data:
+        user.is_active = user_update.is_active
+
+    if "is_admin" in update_data:
+        user.is_admin = user_update.is_admin
+
+    user.updated_at = datetime.now(timezone.utc)
+
     session.add(user)
     session.commit()
     session.refresh(user)
@@ -75,6 +81,14 @@ def admin_delete_user(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="User not found.",
         )
+
+    # delete all positionings and projects associated with this user
+    positionings = session.exec(
+        select(Positioning).where(Positioning.user_id == user.id)
+    ).all()
+
+    for positioning in positionings:
+        session.delete(positioning)
 
     projects = session.exec(
         select(Project).where(Project.user_id == user.id)
@@ -141,6 +155,8 @@ def admin_update_project(
 
     for key, value in update_data.items():
         setattr(project, key, value)
+
+    project.updated_at = datetime.now(timezone.utc)
 
     session.add(project)
     session.commit()

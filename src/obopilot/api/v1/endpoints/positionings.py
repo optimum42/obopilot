@@ -6,10 +6,10 @@ from sqlmodel import Session, select
 
 from obopilot.api.deps import get_current_user
 from obopilot.db.session import get_session
-from obopilot.models.positioning import Positioning
 from obopilot.models.project import Project
 from obopilot.models.user import User
-from obopilot.schemas.positioning import (
+from obopilot.models.positioning import (
+    Positioning,
     OfferInput,
     OptionSelection,
     PositioningRead,
@@ -104,6 +104,20 @@ def demo_options(prefix: str, count: int = 10) -> list[dict[str, Any]]:
     ]
 
 
+@router.get(
+    "/positionings/",
+    response_model=list[PositioningRead],
+)
+def read_positionings(
+    current_user: User = Depends(get_current_user),
+    session: Session = Depends(get_session),
+):
+    statement = select(Positioning).where(Positioning.user_id == current_user.id)
+    positionings = session.exec(statement).all()
+
+    return positionings
+
+
 @router.post(
     "/projects/{project_id}/positioning",
     response_model=PositioningWorkflowResponse,
@@ -161,7 +175,7 @@ def read_positioning(
 
 @router.put(
     "/positionings/{positioning_id}",
-    response_model=PositioningUpdate,
+    response_model=PositioningRead,
 )
 def update_positioning(
     positioning_id: int,

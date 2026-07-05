@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, status
-from sqlmodel import Session, select
+from sqlmodel import SQLModel, Session, select
 
 from obopilot.core.config import ACCESS_TOKEN_EXPIRE_DELTA
 from obopilot.core.security import (
@@ -8,12 +8,15 @@ from obopilot.core.security import (
     verify_password,
 )
 from obopilot.db.session import get_session
-from obopilot.models.user import User
-from obopilot.schemas.token import Token
-from obopilot.schemas.user import UserCreate, UserRead
+from obopilot.models.user import User, UserCreate, UserRead
 from obopilot.api.deps import get_current_user
 
 router = APIRouter()
+
+
+class Token(SQLModel):
+    access_token: str
+    token_type: str
 
 
 @router.get("/health")
@@ -76,6 +79,12 @@ def login_user(
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid email or password.",
+        )
+
+    if not user.is_active:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="User account is inactive.",
         )
 
     access_token = create_access_token(

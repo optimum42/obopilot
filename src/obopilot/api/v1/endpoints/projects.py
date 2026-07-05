@@ -4,9 +4,8 @@ from sqlmodel import Session, select
 
 from obopilot.api.deps import get_current_user
 from obopilot.db.session import get_session
-from obopilot.models.project import Project
+from obopilot.models.project import Project, ProjectCreate, ProjectRead, ProjectUpdate
 from obopilot.models.user import User
-from obopilot.schemas.project import ProjectCreate, ProjectRead, ProjectUpdate
 from obopilot.models.positioning import Positioning
 
 router = APIRouter()
@@ -139,7 +138,7 @@ def delete_project(
         )
 
     # Delete all positionings associated with this project
-    statement = select(Positioning).where(Positioning.user_id == current_user.id)
+    statement = select(Positioning).where(Positioning.project_id == project.id)
     positionings = session.exec(statement).all()
 
     for positioning in positionings:
