@@ -6,7 +6,7 @@ from obopilot.api.deps import get_current_user
 from obopilot.db.session import get_session
 from obopilot.models.project import Project, ProjectCreate, ProjectRead, ProjectUpdate
 from obopilot.models.user import User
-from obopilot.models.positioning import Positioning
+from obopilot.models.positioning import Positioning, PositioningRead
 
 router = APIRouter()
 
@@ -149,3 +149,29 @@ def delete_project(
     session.commit()
 
     return None
+
+
+@router.get(
+    "/{project_id}/positioning",
+    response_model=PositioningRead,
+)
+def read_project_positioning(
+    project_id: int,
+    current_user: User = Depends(get_current_user),
+    session: Session = Depends(get_session),
+):
+    statement = select(Positioning).where(
+        Positioning.project_id == project_id,
+        Positioning.user_id == current_user.id,
+    )
+
+    positioning = session.exec(statement).first()
+
+    if not positioning:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Project not found.",
+        )
+
+    return positioning
+

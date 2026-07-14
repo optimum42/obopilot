@@ -19,13 +19,15 @@ class PositioningBase(SQLModel):
     offer: str | None = None
     uniqueness: str | None = None
 
-    selected_target_group: str | None = None
-    selected_problem: str | None = None
-    selected_desire: str | None = None
-    selected_transformation: str | None = None
-    selected_positioning: str | None = None
-    selected_big_idea: str | None = None
-    selected_pitch: str | None = None
+    # selected_target_group: str | None = None
+    # selected_problem: str | None = None
+    # selected_desire: str | None = None
+    # selected_transformation: str | None = None
+    # selected_positioning: str | None = None
+    # selected_big_idea: str | None = None
+    # selected_pitch: str | None = None
+
+    selected_options: dict | None = Field(default=None, sa_column=Column(JSON))
 
     target_group_options: list | None = Field(default=None, sa_column=Column(JSON))
     problem_options: list | None = Field(default=None, sa_column=Column(JSON))
@@ -56,6 +58,7 @@ class PositioningUpdate(SQLModel):
     current_step: str | None = None
     offer: str | None = None
     uniqueness: str | None = None
+
     selected_target_group: str | None = None
     selected_problem: str | None = None
     selected_desire: str | None = None
@@ -63,6 +66,9 @@ class PositioningUpdate(SQLModel):
     selected_positioning: str | None = None
     selected_big_idea: str | None = None
     selected_pitch: str | None = None
+
+    selected_options: dict | None = None
+
     target_group_options: list | None = None
     problem_options: list | None = None
     desire_options: list | None = None

@@ -4,13 +4,14 @@ version = "0.1.0"
 requires-python = ">=3.10"
 
 [tool.setuptools.packages.find]
-where = ["src"]
+where = ["src", "cli"]
 
 [tool.pytest.ini_options]
-pythonpath = ["src"]
+pythonpath = ["src", "cli"]
 
 [tool.fastapi]
 entrypoint = "obopilot.main:app"
 
 [project.scripts]
 aicontext = "aicontext.cli:main"
+cli = "api.main:main"

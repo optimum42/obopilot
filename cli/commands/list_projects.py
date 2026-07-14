@@ -19,6 +19,8 @@ def list_projects():
             print(
                 f"{project.id:<5}"
                 f"{project.user_id:<5}"
+                f"{project.user.is_admin:<5}"
+                f"{project.user.email:<20}"
                 f"{project.name:<30}"
                 f"{project.description}"
             )
