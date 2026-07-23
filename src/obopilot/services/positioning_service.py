@@ -61,7 +61,6 @@ def get_user_positioning(
 
 
 def ensure_step(positioning: Positioning, expected_step: str) -> None:
-    return
     if positioning.current_step != expected_step:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -120,7 +119,7 @@ def read_positionings(
         Positioning.user_id == current_user.id
     )
 
-    return session.exec(statement).all()
+    return list[Positioning](session.exec(statement).all())
 
 
 def start_positioning(
@@ -397,6 +396,12 @@ def select_positioning(
     positioning.selected_options = selected_options
 
     positioning.big_idea_options = ai_service.generate_big_ideas(
+        offer=positioning.offer,
+        uniqueness=positioning.uniqueness,
+        selected_target_group=positioning.selected_options["selected_target_group"],
+        selected_problem=positioning.selected_options["selected_problem"],
+        selected_desire=positioning.selected_options["selected_desire"],
+        selected_transformation=positioning.selected_options["selected_transformation"],
         selected_positioning=positioning.selected_options["selected_positioning"],
     )
 
@@ -512,3 +517,23 @@ def read_positioning_result(
         current_step=positioning.current_step,
         result=positioning.marketing_kit or {},
     )
+
+
+def wizard_positioning(
+    *,
+    positioning_id: int,
+    offer: str,
+    uniqueness: str,
+    current_user: User,
+    session: Session,
+) -> PositioningWorkflowResponse:
+    save_offer(positioning_id, offer, current_user, session)
+    save_uniqueness(positioning_id, uniqueness, current_user, session)
+    select_target_group(positioning_id, 1, current_user, session)
+    select_problem(positioning_id, 1, current_user, session)
+    select_desire(positioning_id, 1, current_user, session)
+    select_transformation(positioning_id, 1, current_user, session)
+    select_positioning(positioning_id, 1, current_user, session)
+    select_big_idea(positioning_id, 1, current_user, session)
+    return select_pitch(positioning_id, 1, current_user, session)
+

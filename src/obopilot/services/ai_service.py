@@ -6,19 +6,15 @@ from dotenv import load_dotenv
 from openai import OpenAI
 
 load_dotenv()
+
+if os.getenv("USE_ADMIN_PROMPTS", "false").lower() in ("true", "1", "t", "y", "yes", "on", "enable", "enabled", "active", "enabled"):
+    import  obopilot.services.positioning_prompts_admin as prompts
+else:
+    import obopilot.services.positioning_prompts as prompts
+
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-4.1-mini")
 client = OpenAI(api_key=OPENAI_API_KEY)
-
-
-def _base_prompt_rules() -> str:
-    return """
-    Wichtig:
-    - Schreibe vollständig auf Deutsch.
-    - Verwende echte deutsche Umlaute wie ä, ö, ü und ß.
-    - Verwende keine Unicode-Escape-Sequenzen.
-    - Gib ausschließlich strukturierte Daten gemäß Schema zurück.
-    """
 
 
 def _build_option(
@@ -64,10 +60,6 @@ def _call_openai_options(
     schema: dict,
     fallback: list[dict[str, Any]],
 ) -> list[dict[str, Any]]:
-    # print(50 * "#")
-    # print(f"_call_openai_options returning fallback !!!")
-    # print(50 * "#")
-    # return fallback
     if not OPENAI_API_KEY:
         return fallback
 
@@ -134,37 +126,10 @@ def generate_target_groups(
         for index in range(1, count + 1)
     ]
 
-    prompt = f"""
-    Du bist ein erfahrener Positionierungs- und Marketingstratege.
-    
-    Ermittle die {count} attraktivsten Zielgruppen für folgendes Angebot.
-    
-    Angebot:
-    {offer}
-    
-    Einzigartigkeit:
-    {uniqueness}
-    
-    Bewerte jede Zielgruppe nach:
-    
-    1. Marktpotenzial
-    2. Kaufwahrscheinlichkeit
-    3. Zahlungsbereitschaft
-    4. Erreichbarkeit
-    5. Passung zum Angebot
-    
-    Erzeuge zusätzlich:
-    
-    - Branche
-    - Unternehmensgröße
-    - typischer Entscheider
-    - Leidensdruck
-    - Kaufpotenzial
-    
-    Sortiere anschließend absteigend nach Score.
-    
-    {_base_prompt_rules()}
-    """
+    prompt = prompts.target_group_prompt(
+        offer=offer,
+        uniqueness=uniqueness,
+    )
 
     return _generate_options(
         schema_name="target_group_options",
@@ -220,32 +185,11 @@ def generate_problems(
         for index in range(1, count + 1)
     ]
 
-    prompt = f"""
-    Du bist ein erfahrener Positionierungs- und Marketingstratege.
-    
-    Ermittle {count} konkrete Probleme dieser Zielgruppe, die mit dem Angebot gelöst oder reduziert werden können.
-    
-    Angebot:
-    {offer}
-    
-    Einzigartigkeit:
-    {uniqueness}
-    
-    Ausgewählte Zielgruppe:
-    {selected_target_group}
-    
-    Priorisiere Probleme, die kaufentscheidend sein können.
-    
-    Bewerte jedes Problem nach:
-    1. Schmerzintensität
-    2. Häufigkeit
-    3. wirtschaftlicher Relevanz
-    4. Dringlichkeit
-    5. Lösbarkeit durch das Angebot
-    
-    Sortiere absteigend nach Score.
-    {_base_prompt_rules()}
-    """
+    prompt = prompts.problem_prompt(
+        offer=offer,
+        uniqueness=uniqueness,
+        selected_target_group=selected_target_group,
+    )
 
     return _generate_options(
         schema_name="problem_options",
@@ -292,28 +236,10 @@ def generate_desires(
         for index in range(1, count + 1)
     ]
 
-    prompt = f"""
-    Du bist ein erfahrener Positionierungs- und Marketingstratege.
-    
-    Leite aus folgender Zielgruppe und folgendem Problem {count} Wünsche ab.
-    
-    Zielgruppe:
-    {selected_target_group}
-    
-    Problem:
-    {selected_problem}
-    
-    Unterscheide rationale und emotionale Wünsche.
-    
-    Bewerte jeden Wunsch nach:
-    1. Attraktivität
-    2. Relevanz
-    3. Nähe zum Angebot
-    4. Kaufmotivation
-    
-    Sortiere absteigend nach Score.
-    {_base_prompt_rules()}
-    """
+    prompt = prompts.desire_prompt(
+        selected_target_group=selected_target_group,
+        selected_problem=selected_problem,
+    )
 
     return _generate_options(
         schema_name="desire_options",
@@ -359,31 +285,11 @@ def generate_transformations(
         for index in range(1, count + 1)
     ]
 
-    prompt = f"""
-    Du bist ein erfahrener Positionierungs- und Marketingstratege.
-    
-    Erzeuge {count} konkrete Transformationen.
-    
-    Zielgruppe:
-    {selected_target_group}
-    
-    Problem:
-    {selected_problem}
-    
-    Wunsch:
-    {selected_desire}
-    
-    Jede Transformation beschreibt den Weg vom aktuellen Problemzustand zum gewünschten Zielzustand.
-    
-    Format:
-    - before
-    - after
-    - transformation
-    - customer_value
-    
-    Sortiere absteigend nach Score.
-    {_base_prompt_rules()}
-    """
+    prompt = prompts.transformation_prompt(
+        selected_target_group=selected_target_group,
+        selected_problem=selected_problem,
+        selected_desire=selected_desire,
+    )
 
     return _generate_options(
         schema_name="transformation_options",
@@ -439,37 +345,14 @@ def generate_positioning_options(
         for index in range(1, count + 1)
     ]
 
-    prompt = f"""
-    Erstelle {count} Positionierungsvarianten.
-    
-    Angebot:
-    {offer}
-    
-    Einzigartigkeit:
-    {uniqueness}
-    
-    Zielgruppe:
-    {selected_target_group}
-    
-    Problem:
-    {selected_problem}
-    
-    Wunsch:
-    {selected_desire}
-    
-    Transformation:
-    {selected_transformation}
-    
-    Nutze diese Formel:
-    Ich helfe [Zielgruppe], die unter [Problem] leidet, mit [Angebot] und [Einzigartigkeit] dabei, [Wunsch] zu erreichen, damit sie [Transformation] erleben.
-    
-    Erzeuge Varianten:
-    1. sachlich
-    2. nutzenorientiert
-    3. emotional
-    
-    {_base_prompt_rules()}
-    """
+    prompt = prompts.positioning_prompt(
+        offer=offer,
+        uniqueness=uniqueness,
+        selected_target_group=selected_target_group,
+        selected_problem=selected_problem,
+        selected_desire=selected_desire,
+        selected_transformation=selected_transformation,
+    )
 
     return _generate_options(
         schema_name="positioning_options",
@@ -491,6 +374,12 @@ def generate_positioning_options(
 
 def generate_big_ideas(
     *,
+    offer: str,
+    uniqueness: str,
+    selected_target_group: dict[str, Any],
+    selected_problem: dict[str, Any],
+    selected_desire: dict[str, Any],
+    selected_transformation: dict[str, Any],
     selected_positioning: dict[str, Any],
     count: int = 10,
 ) -> list[dict[str, Any]]:
@@ -505,36 +394,16 @@ def generate_big_ideas(
         for index in range(1, count + 1)
     ]
 
-    prompt = f"""
-    Erzeuge {count} Big Marketing Ideas.
-    
-    Positionierung:
-    {selected_positioning}
-    
-    Jede Big Marketing Idea besteht aus:
-    - Transformationsversprechen
-    - Name eines einzigartigen Systems
-    - kurze Erklärung
-    - zentrale Marketingbotschaft
-    
-    Der Systemname soll merkfähig und professionell klingen.
-    
-    Mögliche Namensmuster:
-    - Methode
-    - Framework
-    - Formel
-    - Blueprint
-    - System
-    
-    Beispiele:
-    - KI-Effizienz-System™
-    - Growth Blueprint™
-    - Profit Formel™
-    - Digitalisierungs-Methode™
-    
-    Sortiere absteigend nach Score.
-    {_base_prompt_rules()}
-    """
+    prompt = prompts.big_idea_prompt(
+        offer=offer,
+        uniqueness=uniqueness,
+        selected_target_group=selected_target_group,
+        selected_problem=selected_problem,
+        selected_desire=selected_desire,
+        selected_transformation=selected_transformation,
+        selected_positioning=selected_positioning,
+        count=count,
+    )
 
     return _generate_options(
         schema_name="big_idea_options",
@@ -590,31 +459,13 @@ def generate_pitch_options(
         for index in range(1, count + 1)
     ]
 
-    prompt = f"""
-    Nutze alle bisherigen Ergebnisse und erzeuge {count} Pitch-Varianten.
-    
-    Zielgruppe:
-    {selected_target_group}
-    
-    Problem:
-    {selected_problem}
-    
-    Wunsch:
-    {selected_desire}
-    
-    Positionierung:
-    {selected_positioning}
-    
-    Big Marketing Idea:
-    {selected_big_idea}
-    
-    Erzeuge:
-    1. 30-Sekunden-Pitch
-    2. 60-Sekunden-Pitch
-    3. Website-Pitch
-    
-    {_base_prompt_rules()}
-    """
+    prompt = prompts.pitch_prompt(
+        selected_target_group=selected_target_group,
+        selected_problem=selected_problem,
+        selected_desire=selected_desire,
+        selected_positioning=selected_positioning,
+        selected_big_idea=selected_big_idea,
+    )
 
     return _generate_options(
         schema_name="pitch_options",
@@ -694,61 +545,23 @@ def generate_marketing_kit(
         "additionalProperties": False,
     }
 
-    prompt = f"""
-    Erzeuge ein sofort nutzbares Marketing-Kit.
-    
-    Ausgewählte Ergebnisse:
-    
-    Angebot:
-    {offer}
-    
-    Einzigartigkeit:
-    {uniqueness}
-    
-    Zielgruppe:
-    {selected_target_group}
-    
-    Hauptproblem:
-    {selected_problem}
-    
-    Hauptwunsch:
-    {selected_desire}
-    
-    Transformation:
-    {selected_transformation}
-    
-    Positionierung:
-    {selected_positioning}
-    
-    Big Marketing Idea:
-    {selected_big_idea}
-    
-    Elevator Pitch:
-    {selected_pitch}
-    
-    Das Marketing-Kit enthält:
-    1. One-Liner
-    2. Website Headline
-    3. Website Subheadline
-    4. LinkedIn Bio
-    5. Elevator Pitch
-    6. Positionierung
-    7. Zielgruppenbeschreibung
-    8. Hauptproblem
-    9. Hauptwunsch
-    10. Transformation
-    11. Big Marketing Idea
-    12. Systemname
-    
-    Alle Texte sollen sofort einsetzbar sein.
-    {_base_prompt_rules()}
-    """
+    prompt = prompts.marketing_kit_prompt(
+        offer=offer,
+        uniqueness=uniqueness,
+        selected_target_group=selected_target_group,
+        selected_problem=selected_problem,
+        selected_desire=selected_desire,
+        selected_transformation=selected_transformation,
+        selected_positioning=selected_positioning,
+        selected_big_idea=selected_big_idea,
+        selected_pitch=selected_pitch,
+    )
 
     try:
         response = client.responses.create(
             model=OPENAI_MODEL,
             input=prompt,
-            text={
+             text={
                 "format": {
                     "type": "json_schema",
                     "name": "marketing_kit",
@@ -765,3 +578,6 @@ def generate_marketing_kit(
         return fallback
 
 
+
+if __name__ == "__main__":
+    print(f"Using {prompts.prompt_version()}")

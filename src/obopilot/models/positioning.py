@@ -19,14 +19,6 @@ class PositioningBase(SQLModel):
     offer: str | None = None
     uniqueness: str | None = None
 
-    # selected_target_group: str | None = None
-    # selected_problem: str | None = None
-    # selected_desire: str | None = None
-    # selected_transformation: str | None = None
-    # selected_positioning: str | None = None
-    # selected_big_idea: str | None = None
-    # selected_pitch: str | None = None
-
     selected_options: dict | None = Field(default=None, sa_column=Column(JSON))
 
     target_group_options: list | None = Field(default=None, sa_column=Column(JSON))
@@ -59,14 +51,6 @@ class PositioningUpdate(SQLModel):
     offer: str | None = None
     uniqueness: str | None = None
 
-    selected_target_group: str | None = None
-    selected_problem: str | None = None
-    selected_desire: str | None = None
-    selected_transformation: str | None = None
-    selected_positioning: str | None = None
-    selected_big_idea: str | None = None
-    selected_pitch: str | None = None
-
     selected_options: dict | None = None
 
     target_group_options: list | None = None
@@ -94,6 +78,15 @@ class OfferInput(SQLModel):
 
 class UniquenessInput(SQLModel):
     uniqueness: str
+
+
+class WizardInput(SQLModel):
+    offer: str
+    uniqueness: str
+
+
+class TargetGroupInput(WizardInput):
+    count: int | None = 3
 
 
 class OptionSelection(SQLModel):

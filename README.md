@@ -124,7 +124,7 @@ DEBUG=true
 
 ## Generated Website
 
-![Movie Website](docs/screenshots/screenshot.png)
+![OBO-Pilot Website](docs/screenshots/obopilot.png)
 
 ---
 

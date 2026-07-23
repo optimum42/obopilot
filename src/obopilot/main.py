@@ -1,11 +1,12 @@
-from obopilot.core.config import APP_NAME, OUTPUT_DIR, LOG_DIR, LOG_FILE
+from obopilot.core.config import APP_NAME, APP_VERSION, OUTPUT_DIR, LOG_DIR, LOG_FILE
 import logging
 from fastapi import FastAPI
+
 from obopilot.api.v1.router import api_router
 
 app = FastAPI(
-    title="OBO-Pilot API",
-    version="0.1.0",
+    title=APP_NAME,
+    version=APP_VERSION,
     swagger_ui_parameters={"tagsSorter": "original", "operationsSorter": "original"}
 )
 
@@ -15,16 +16,15 @@ app.include_router(api_router, prefix="/api/v1")
 
 @app.get("/")
 def root():
-    return {"message": "OBO Pilot API is running"}
-
-
-@app.get("/health")
-def health_check():
-    return {"status": "ok"}
+    return {
+        "name": APP_NAME,
+        "version": APP_VERSION,
+    }
 
 
 def show_app():
     print(APP_NAME)
+    print(APP_VERSION)
     print(OUTPUT_DIR)
     print(LOG_DIR)
 

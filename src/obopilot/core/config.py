@@ -9,6 +9,12 @@ import os
 load_dotenv()
 
 # -------------------------------------------------------------------
+# Application
+# -------------------------------------------------------------------
+APP_NAME = "OBO-Pilot API"
+APP_VERSION = "0.4.1"
+
+# -------------------------------------------------------------------
 # Project Paths
 # -------------------------------------------------------------------
 
@@ -28,8 +34,6 @@ LOG_DIR.mkdir(exist_ok=True)
 # Environment Variables
 # -------------------------------------------------------------------
 
-APP_NAME = os.getenv("APP_NAME", "OBO-Pilot")
-
 API_KEY = os.getenv("API_KEY", "")
 API_BASE_URL = os.getenv(
     "API_BASE_URL",
@@ -45,14 +49,6 @@ DEBUG = os.getenv("DEBUG", "false").lower() == "true"
 LOG_FILE = LOG_DIR / "app.log"
 
 # -------------------------------------------------------------------
-# Example Configuration Values
-# -------------------------------------------------------------------
-
-REQUEST_TIMEOUT = 30
-
-MAX_RETRIES = 3
-
-# -------------------------------------------------------------------
 # JWT Auth
 # -------------------------------------------------------------------
 
@@ -61,6 +57,6 @@ if not SECRET_KEY:
     raise ValueError("SECRET_KEY not configured")
 
 ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
+ACCESS_TOKEN_EXPIRE_MINUTES = 180
 
 ACCESS_TOKEN_EXPIRE_DELTA = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)

@@ -6,7 +6,9 @@ from obopilot.api.deps import get_current_user
 from obopilot.db.session import get_session
 from obopilot.models.project import Project, ProjectCreate, ProjectRead, ProjectUpdate
 from obopilot.models.user import User
-from obopilot.models.positioning import Positioning, PositioningRead
+from obopilot.models.positioning import Positioning, PositioningRead, PositioningWorkflowResponse
+from obopilot.services import positioning_service
+
 
 router = APIRouter()
 
@@ -174,4 +176,22 @@ def read_project_positioning(
         )
 
     return positioning
+
+
+@router.post(
+    "/{project_id}/positioning",
+    response_model=PositioningWorkflowResponse,
+    status_code=status.HTTP_201_CREATED,
+)
+def start_positioning(
+    project_id: int,
+    current_user: User = Depends(get_current_user),
+    session: Session = Depends(get_session),
+):
+    return positioning_service.start_positioning(
+        project_id=project_id,
+        current_user=current_user,
+        session=session,
+    )
+
 

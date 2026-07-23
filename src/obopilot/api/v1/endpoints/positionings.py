@@ -14,14 +14,19 @@ from obopilot.models.positioning import (
     PositioningWorkflowResponse,
     OfferInput,
     UniquenessInput,
+    WizardInput,
 )
 from obopilot.services import positioning_service
 
 router = APIRouter()
 
 
+@router.get("/health")
+def positioning_health():
+    return {"status": "positioning endpoint ready"}
+
 @router.get(
-    "/positionings/",
+    "/",
     response_model=list[PositioningRead],
 )
 def read_positionings(
@@ -34,25 +39,8 @@ def read_positionings(
     )
 
 
-@router.post(
-    "/projects/{project_id}/positioning",
-    response_model=PositioningWorkflowResponse,
-    status_code=status.HTTP_201_CREATED,
-)
-def start_positioning(
-    project_id: int,
-    current_user: User = Depends(get_current_user),
-    session: Session = Depends(get_session),
-):
-    return positioning_service.start_positioning(
-        project_id=project_id,
-        current_user=current_user,
-        session=session,
-    )
-
-
 @router.get(
-    "/positionings/{positioning_id}",
+    "/{positioning_id}",
     response_model=PositioningRead,
 )
 def read_positioning(
@@ -68,7 +56,7 @@ def read_positioning(
 
 
 @router.put(
-    "/positionings/{positioning_id}",
+    "/{positioning_id}",
     response_model=PositioningRead,
 )
 def update_positioning(
@@ -86,7 +74,7 @@ def update_positioning(
 
 
 @router.delete(
-    "/positionings/{positioning_id}",
+    "/{positioning_id}",
     status_code=status.HTTP_204_NO_CONTENT,
 )
 def delete_positioning(
@@ -114,7 +102,7 @@ def delete_positioning(
 
 
 @router.get(
-    "/positionings/{positioning_id}/offer",
+    "/{positioning_id}/offer",
     response_model=str,
 )
 def read_offer(
@@ -130,7 +118,7 @@ def read_offer(
 
 
 @router.post(
-    "/positionings/{positioning_id}/offer",
+    "/{positioning_id}/offer",
     response_model=PositioningWorkflowResponse,
 )
 def save_offer(
@@ -148,7 +136,7 @@ def save_offer(
 
 
 @router.get(
-    "/positionings/{positioning_id}/uniqueness",
+    "/{positioning_id}/uniqueness",
     response_model=str,
 )
 def read_uniqueness(
@@ -164,7 +152,7 @@ def read_uniqueness(
 
 
 @router.post(
-    "/positionings/{positioning_id}/uniqueness",
+    "/{positioning_id}/uniqueness",
     response_model=PositioningWorkflowResponse,
 )
 def save_uniqueness(
@@ -182,7 +170,7 @@ def save_uniqueness(
 
 
 @router.get(
-    "/positionings/{positioning_id}/target-group-options",
+    "/{positioning_id}/target-group-options",
     response_model=list,
 )
 def read_target_group_options(
@@ -198,7 +186,7 @@ def read_target_group_options(
 
 
 @router.post(
-    "/positionings/{positioning_id}/target-group",
+    "/{positioning_id}/target-group",
     response_model=PositioningWorkflowResponse,
 )
 def select_target_group(
@@ -216,7 +204,7 @@ def select_target_group(
 
 
 @router.get(
-    "/positionings/{positioning_id}/problem-options",
+    "/{positioning_id}/problem-options",
     response_model=list,
 )
 def read_problem_options(
@@ -232,7 +220,7 @@ def read_problem_options(
 
 
 @router.post(
-    "/positionings/{positioning_id}/problem",
+    "/{positioning_id}/problem",
     response_model=PositioningWorkflowResponse,
 )
 def select_problem(
@@ -250,7 +238,7 @@ def select_problem(
 
 
 @router.get(
-    "/positionings/{positioning_id}/desire-options",
+    "/{positioning_id}/desire-options",
     response_model=list,
 )
 def read_desire_options(
@@ -266,7 +254,7 @@ def read_desire_options(
 
 
 @router.post(
-    "/positionings/{positioning_id}/desire",
+    "/{positioning_id}/desire",
     response_model=PositioningWorkflowResponse,
 )
 def select_desire(
@@ -284,7 +272,7 @@ def select_desire(
 
 
 @router.get(
-    "/positionings/{positioning_id}/transformation-options",
+    "/{positioning_id}/transformation-options",
     response_model=list,
 )
 def read_transformation_options(
@@ -300,7 +288,7 @@ def read_transformation_options(
 
 
 @router.post(
-    "/positionings/{positioning_id}/transformation",
+    "/{positioning_id}/transformation",
     response_model=PositioningWorkflowResponse,
 )
 def select_transformation(
@@ -318,7 +306,7 @@ def select_transformation(
 
 
 @router.get(
-    "/positionings/{positioning_id}/positioning-options",
+    "/{positioning_id}/positioning-options",
     response_model=list,
 )
 def read_positioning_options(
@@ -334,7 +322,7 @@ def read_positioning_options(
 
 
 @router.post(
-    "/positionings/{positioning_id}/positioning",
+    "/{positioning_id}/positioning",
     response_model=PositioningWorkflowResponse,
 )
 def select_positioning(
@@ -352,7 +340,7 @@ def select_positioning(
 
 
 @router.get(
-    "/positionings/{positioning_id}/big-idea-options",
+    "/{positioning_id}/big-idea-options",
     response_model=list,
 )
 def read_big_idea_options(
@@ -368,7 +356,7 @@ def read_big_idea_options(
 
 
 @router.post(
-    "/positionings/{positioning_id}/big-idea",
+    "/{positioning_id}/big-idea",
     response_model=PositioningWorkflowResponse,
 )
 def select_big_idea(
@@ -386,7 +374,7 @@ def select_big_idea(
 
 
 @router.get(
-    "/positionings/{positioning_id}/pitch-options",
+    "/{positioning_id}/pitch-options",
     response_model=list,
 )
 def read_pitch_options(
@@ -402,7 +390,7 @@ def read_pitch_options(
 
 
 @router.post(
-    "/positionings/{positioning_id}/pitch",
+    "/{positioning_id}/pitch",
     response_model=PositioningWorkflowResponse,
 )
 def select_pitch(
@@ -420,7 +408,7 @@ def select_pitch(
 
 
 @router.get(
-    "/positionings/{positioning_id}/result",
+    "/{positioning_id}/result",
     response_model=PositioningResult,
 )
 def read_positioning_result(
@@ -433,3 +421,23 @@ def read_positioning_result(
         current_user=current_user,
         session=session,
     )
+
+
+@router.post(
+    "/{positioning_id}/wizard",
+    response_model=PositioningWorkflowResponse,
+)
+def run_wizard(
+    positioning_id: int,
+    wizard_input: WizardInput,
+    current_user: User = Depends(get_current_user),
+    session: Session = Depends(get_session),
+):
+    return positioning_service.wizard_positioning(
+        positioning_id=positioning_id,
+        offer=wizard_input.offer,
+        uniqueness=wizard_input.uniqueness,
+        current_user=current_user,
+        session=session,
+    )
+

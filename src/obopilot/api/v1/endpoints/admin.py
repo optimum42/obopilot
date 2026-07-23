@@ -12,6 +12,11 @@ from obopilot.models.positioning import Positioning, PositioningRead
 router = APIRouter()
 
 
+@router.get("/health")
+def admin_health():
+    return {"status": "admin endpoint ready"}
+
+
 @router.get("/users", response_model=list[UserRead])
 def admin_read_users(
     admin_user: User = Depends(get_current_admin_user),
